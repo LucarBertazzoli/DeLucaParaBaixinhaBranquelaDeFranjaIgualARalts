@@ -11,6 +11,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { synth } from '@/audio/synth';
+import { IphoneNotice } from '@/components/IphoneNotice';
 import { RotateGate } from '@/components/RotateGate';
 import { Onboarding } from '@/features/onboarding/Onboarding';
 import { sincronizarResposta } from '@/features/surpresa/resposta';
@@ -80,6 +81,7 @@ export default function RootLayout() {
             <Stack.Screen name="tocar/[songId]" options={{ gestureEnabled: false }} />
           </Stack>
           {hydrated && !onboarded && pathname === '/musicas' ? <Onboarding /> : null}
+          <IphoneNotice />
           {/* A página secreta abre em pé também. */}
           {pathname !== '/pirulito-de-netuno-4817' ? <RotateGate /> : null}
         </ThemeProvider>
