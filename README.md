@@ -14,9 +14,9 @@ CCB), com modo colorido opcional. As telas:
 1. **Boas-vindas** — “Bem-vinda, <nome>” e a escolha do avatar (Ralts, Eevee
    ou Piplup). O nome é fixo (`src/features/perfil/usuaria.ts`); o avatar fica
    salvo e aparece no app todo.
-2. **Músicas** — a lista das 16 músicas, dividida em grupos (Jogos Vorazes,
-   Loki, Pedidos avulsos, One Direction, The Vampire
-   Diaries, Nirvana, Linkin Park). Sem busca: os grupos à esquerda pulam até
+2. **Músicas** — a lista das 13 músicas, dividida em grupos (Jogos Vorazes,
+   Loki, Pedidos avulsos, One Direction, Nirvana,
+   Linkin Park). Sem busca: os grupos à esquerda pulam até
    cada parte. Músicas ainda sem partitura aparecem como “sem partitura”.
 3. **Perfil** — o avatar grande, o nome, a troca de avatar e as últimas
    músicas tocadas. Abre tocando no avatar.
@@ -47,7 +47,7 @@ No computador, as fileiras Q W E R… e Z X C V… do teclado tocam os manuais.
 
 ## O que já funciona
 
-- **Repertório**: 16 músicas cadastradas; as partituras entram por MusicXML
+- **Repertório**: 13 músicas cadastradas; as partituras entram por MusicXML
   pelo botão **Importar** do app (ficam só no aparelho) ou com
   `scripts/importar-partituras.py` (ver `docs/CONTEUDO.md`).
 - **Órgão no formato da organista**: 3 pautas (mão direita, mão esquerda e

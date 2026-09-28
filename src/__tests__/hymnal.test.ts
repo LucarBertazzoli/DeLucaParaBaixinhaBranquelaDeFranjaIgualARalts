@@ -44,7 +44,7 @@ describe('partituras importadas', () => {
     const s = songFromFile('in-the-end', FILE);
     // O título e o artista vêm do repertório.
     expect(s.title).toBe('In the End');
-    expect(s.hymnNumber).toBe(15);
+    expect(s.hymnNumber).toBe(12);
     expect(s.keySignature).toBe(-1);
     expect(s.timeSignature).toEqual([3, 4]);
     expect(s.measures).toEqual([0, 1, 4]);

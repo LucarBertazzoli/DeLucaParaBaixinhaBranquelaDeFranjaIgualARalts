@@ -7,18 +7,17 @@ import { REPERTORIO, REPERTORIO_LISTA, repertoireSong } from '@/content/repertor
 import { hasScore } from '@/content/songs';
 
 describe('repertório', () => {
-  it('tem as 16 músicas em 7 grupos, com ids únicos', () => {
+  it('tem as 13 músicas em 6 grupos, com ids únicos', () => {
     expect(REPERTORIO.map((g) => [g.label, g.songs.length])).toEqual([
       ['Jogos Vorazes', 4],
       ['Loki', 1],
-      ['Pedidos avulsos', 4],
+      ['Pedidos avulsos', 2],
       ['One Direction', 2],
-      ['The Vampire Diaries', 1],
       ['Nirvana', 2],
       ['Linkin Park', 2],
     ]);
-    expect(new Set(REPERTORIO_LISTA.map((s) => s.id)).size).toBe(16);
-    expect(REPERTORIO_LISTA.at(-1)).toMatchObject({ number: 16, title: "What I've Done" });
+    expect(new Set(REPERTORIO_LISTA.map((s) => s.id)).size).toBe(13);
+    expect(REPERTORIO_LISTA.at(-1)).toMatchObject({ number: 13, title: "What I've Done" });
   });
 
   it('toda partitura importada é de uma música do repertório e carrega', () => {
