@@ -1,3 +1,5 @@
+import { usePartituras } from '@/store/partituras';
+
 import { scoreLoaders } from './partituras/registry';
 import type { ScoreFile } from './partituras/types';
 import { repertoireSong } from './repertorio';
@@ -5,16 +7,26 @@ import type { NoteEvent, RestEvent, Song, Voice } from './types';
 
 /**
  * Converte as partituras importadas (duas pautas, até duas vozes em cada)
- * em músicas do app. Cada partitura é carregada só quando é aberta.
+ * em músicas do app. Vêm do próprio código (importador de linha de comando)
+ * ou foram importadas no aparelho; a do aparelho tem preferência.
  */
 
 const TPQ = 480;
 const VOICES: Voice[] = ['soprano', 'alto', 'tenor', 'bass'];
-const cache = new Map<string, Song>();
+const cache = new Map<string, { file: ScoreFile; song: Song }>();
 
-/** A música já tem partitura importada? */
-export function hasScore(id: string): boolean {
-  return id in scoreLoaders;
+function scoreFor(id: string): ScoreFile | undefined {
+  const local = usePartituras.getState().scores[id];
+  if (local) return local;
+  return scoreLoaders[id]?.();
+}
+
+/**
+ * A música já tem partitura (no código ou importada no aparelho)? Telas
+ * passam `saved` (lido do store com o hook) para re-renderizar quando muda.
+ */
+export function hasScore(id: string, saved = usePartituras.getState().scores): boolean {
+  return id in saved || id in scoreLoaders;
 }
 
 /** Converte o arquivo compacto em uma `Song` do app. */
@@ -64,12 +76,11 @@ export function songFromFile(id: string, f: ScoreFile): Song {
   };
 }
 
-export function loadSong(id: string): Song | undefined {
+export function loadSong(id: string, file = scoreFor(id)): Song | undefined {
+  if (!file) return undefined;
   const cached = cache.get(id);
-  if (cached) return cached;
-  const loader = scoreLoaders[id];
-  if (!loader) return undefined;
-  const song = songFromFile(id, loader());
-  cache.set(id, song);
+  if (cached && cached.file === file) return cached.song;
+  const song = songFromFile(id, file);
+  cache.set(id, { file, song });
   return song;
 }

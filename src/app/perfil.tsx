@@ -11,6 +11,7 @@ import { AvatarCircle } from '@/features/perfil/AvatarBadge';
 import { AVATARES, avatarDe } from '@/features/perfil/avatares';
 import { NOME_USUARIA } from '@/features/perfil/usuaria';
 import { RoundButton } from '@/features/player/controls';
+import { usePartituras } from '@/store/partituras';
 import { useSettings } from '@/store/settings';
 import { usePalette, useType } from '@/theme';
 import { withAlpha } from '@/theme/color';
@@ -22,7 +23,9 @@ export default function Perfil() {
   const avatar = useSettings((s) => s.avatar);
   const recentIds = useSettings((s) => s.recent);
   const recent = recentIds.map((id) => repertoireSong(id)).filter((s) => !!s);
-  const prontas = REPERTORIO_LISTA.filter((s) => hasScore(s.id)).length;
+  const saved = usePartituras((s) => s.scores);
+  const prontas = REPERTORIO_LISTA.filter((s) => hasScore(s.id, saved)).length;
+  const onDevice = REPERTORIO_LISTA.filter((s) => s.id in saved);
   const back = () => (router.canGoBack() ? router.back() : router.replace('/musicas'));
 
   return (
@@ -97,6 +100,34 @@ export default function Perfil() {
                 </Text>
               )}
             </View>
+
+            <Text style={[t.bold, styles.section, { color: p.textFaint }]}>PARTITURAS NESTE APARELHO</Text>
+            <View style={[styles.card, { backgroundColor: p.surface, borderColor: p.border }]}>
+              {onDevice.length ? (
+                onDevice.map((s, i) => (
+                  <View
+                    key={s.id}
+                    style={[styles.row, i < onDevice.length - 1 && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.border }]}>
+                    <Text style={[t.bold, styles.number, { color: p.text }]}>{s.number}</Text>
+                    <Text style={[t.regular, styles.title, { color: p.text }]} numberOfLines={1}>
+                      {s.title}
+                    </Text>
+                    <Pressable
+                      onPress={() => usePartituras.getState().remove(s.id)}
+                      hitSlop={8}
+                      accessibilityRole="button"
+                      accessibilityLabel={`Apagar a partitura de ${s.title}`}
+                      style={({ pressed }) => [styles.remove, { borderColor: p.border }, pressed && { opacity: 0.6 }]}>
+                      <Text style={[t.regular, styles.removeText, { color: p.textDim }]}>apagar</Text>
+                    </Pressable>
+                  </View>
+                ))
+              ) : (
+                <Text style={[t.regular, styles.empty, { color: p.textDim }]}>
+                  Nenhuma. Use o botão Importar na lista de músicas.
+                </Text>
+              )}
+            </View>
           </ScrollView>
         </Animated.View>
       </View>
@@ -132,4 +163,6 @@ const styles = StyleSheet.create({
   number: { fontSize: 14, minWidth: 24, textAlign: 'right' },
   title: { fontSize: 14, flex: 1 },
   empty: { fontSize: 13, padding: 16 },
+  remove: { borderWidth: 1, borderRadius: 999, paddingHorizontal: 12, paddingVertical: 4 },
+  removeText: { fontSize: 12 },
 });

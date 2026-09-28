@@ -48,7 +48,8 @@ No computador, as fileiras Q W E R… e Z X C V… do teclado tocam os manuais.
 ## O que já funciona
 
 - **Repertório**: 15 músicas cadastradas; as partituras entram por MusicXML
-  com `scripts/importar-partituras.py` (ver `docs/CONTEUDO.md`).
+  pelo botão **Importar** do app (ficam só no aparelho) ou com
+  `scripts/importar-partituras.py` (ver `docs/CONTEUDO.md`).
 - **Órgão no formato da organista**: 3 pautas (mão direita, mão esquerda e
   pedaleira), notas repetidas seguradas nas vozes internas e pedal a partir do
   baixo — conferido com o hinário de órgão impresso.
