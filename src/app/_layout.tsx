@@ -2,7 +2,7 @@ import { SourceSerif4_400Regular } from '@expo-google-fonts/source-serif-4/400Re
 import { SourceSerif4_700Bold } from '@expo-google-fonts/source-serif-4/700Bold';
 import { useFonts } from 'expo-font';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { DarkTheme, ThemeProvider } from 'expo-router';
+import { DarkTheme, ThemeProvider, usePathname } from 'expo-router';
 import { Stack } from 'expo-router/stack';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useSyncExternalStore } from 'react';
@@ -30,6 +30,8 @@ export default function RootLayout() {
   const instrument = useSettings((s) => s.instrument);
   const volume = useSettings((s) => s.volume);
   const onboarded = useSettings((s) => s.onboarded);
+  // Os cartões de apresentação aparecem depois das boas-vindas, na lista.
+  const pathname = usePathname();
   // Espera ler os ajustes salvos antes de decidir mostrar a apresentação.
   const hydrated = useSyncExternalStore(
     (cb) => useSettings.persist.onFinishHydration(cb),
@@ -67,9 +69,11 @@ export default function RootLayout() {
           <StatusBar style="light" hidden />
           <Stack screenOptions={{ headerShown: false, orientation: 'landscape', contentStyle: { backgroundColor: background }, animation: 'fade' }}>
             <Stack.Screen name="index" />
+            <Stack.Screen name="musicas" />
+            <Stack.Screen name="perfil" />
             <Stack.Screen name="tocar/[songId]" options={{ gestureEnabled: false }} />
           </Stack>
-          {hydrated && !onboarded ? <Onboarding /> : null}
+          {hydrated && !onboarded && pathname === '/musicas' ? <Onboarding /> : null}
           <RotateGate />
         </ThemeProvider>
       </SafeAreaProvider>

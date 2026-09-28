@@ -63,7 +63,7 @@ export function Scrubber({ measureStarts, secondsPerBeat, progress, onSeek, thin
       onResponderRelease={() => setDrag(null)}
       onResponderTerminate={() => setDrag(null)}
       accessibilityRole="adjustable"
-      accessibilityLabel="Linha do tempo do hino"
+      accessibilityLabel="Linha do tempo da música"
       style={thin ? styles.hitThin : styles.hit}>
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
         <View style={[thin ? styles.axisThin : styles.axis, { backgroundColor: track }]} />

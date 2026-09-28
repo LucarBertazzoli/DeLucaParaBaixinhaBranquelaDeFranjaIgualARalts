@@ -1,6 +1,6 @@
 # CCB Piano
 
-App (Android, iOS e web) para aprender **teclado e órgão** com os **hinos da CCB**.
+App (Android, iOS e web) para aprender **teclado** com um **repertório pessoal** de músicas.
 Funciona na **horizontal** (paisagem), como o Simply Piano.
 
 A experiência de tocar é inspirada no Simply Piano: as notas caem sobre um
@@ -9,11 +9,18 @@ microfone) e, no modo **Aprender**, **para e espera** até o aluno tocar a nota
 certa. Sem instrutor de IA.
 
 Visual **minimalista em preto e branco** (fonte Verdana, a mesma do site da
-CCB), com modo colorido opcional. São só duas telas:
+CCB), com modo colorido opcional. As telas:
 
-1. **Entrada** — um campo para digitar o número ou o nome, a escolha entre
-   *Hinos* e *Coros* e uma roda que gira até o número certo.
-2. **Tocar** — o hino abre direto. Ao pausar, aparece o painel (inspirado no
+1. **Boas-vindas** — “Bem-vinda, <nome>” e a escolha do avatar (Ralts, Eevee
+   ou Piplup). O nome é fixo (`src/features/perfil/usuaria.ts`); o avatar fica
+   salvo e aparece no app todo.
+2. **Músicas** — a lista das 36 músicas, dividida em grupos (Jogos Vorazes,
+   Loki, Cinquenta Tons de Cinza, Pedidos avulsos, One Direction, The Vampire
+   Diaries, Nirvana, Linkin Park). Sem busca: os grupos à esquerda pulam até
+   cada parte. Músicas ainda sem partitura aparecem como “sem partitura”.
+3. **Perfil** — o avatar grande, o nome, a troca de avatar e as últimas
+   músicas tocadas. Abre tocando no avatar.
+4. **Tocar** — a música abre direto. Ao pausar, aparece o painel (inspirado no
    Artie): em cima, a **linha do tempo arrastável** (toque ou arraste para ir a
    qualquer compasso; ao tocar de novo há uma contagem antes do ponto) e os
    ajustes em abas:
@@ -40,9 +47,8 @@ No computador, as fileiras Q W E R… e Z X C V… do teclado tocam os manuais.
 
 ## O que já funciona
 
-- **Hinário completo**: os 480 hinos e 6 coros do Hinário nº 5, com título,
-  autor, tonalidade, compasso, metrônomo e as 4 vozes (importados de
-  partituras digitais — ver `docs/CONTEUDO.md`).
+- **Repertório**: 36 músicas cadastradas; as partituras entram por MusicXML
+  com `scripts/importar-partituras.py` (ver `docs/CONTEUDO.md`).
 - **Órgão no formato da organista**: 3 pautas (mão direita, mão esquerda e
   pedaleira), notas repetidas seguradas nas vozes internas e pedal a partir do
   baixo — conferido com o hinário de órgão impresso.

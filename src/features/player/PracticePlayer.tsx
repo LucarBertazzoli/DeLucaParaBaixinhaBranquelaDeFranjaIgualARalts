@@ -11,6 +11,7 @@ import { PedalBoard } from '@/components/PedalBoard';
 import { PianoKeyboard } from '@/components/PianoKeyboard';
 import type { Song, Voice } from '@/content/types';
 import type { PracticeMode } from '@/engine/practice-session';
+import { AvatarBadge, AvatarCircle } from '@/features/perfil/AvatarBadge';
 import { AppearanceSettings } from '@/features/settings/AppearanceSettings';
 import { inputHub } from '@/input/input-hub';
 import type { InputSourceKind, KeyTarget } from '@/input/types';
@@ -266,7 +267,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
 
   const whoPlays =
     mode === 'demo'
-      ? 'Só ouvir: o app toca o hino inteiro.'
+      ? 'Só ouvir: o app toca a música inteira.'
       : `Você toca: ${voices.map((v) => VOICE_LABEL[v].toLowerCase()).join(', ')}. O app toca o resto.`;
 
   // ------------------------------------------------------------- abas do painel
@@ -303,7 +304,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
 
         <SectionTitle>Como tocar</SectionTitle>
         <Glass>
-          <Row label="Modo espera" hint="O hino para até você tocar a nota certa">
+          <Row label="Modo espera" hint="A música para até você tocar a nota certa">
             <Toggle value={waitMode} onChange={setWaitMode} label="Modo espera" />
           </Row>
           <Row label="Acompanhamento" hint="O app toca as vozes que não são suas" last>
@@ -343,7 +344,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
             value={bpm}
             onChange={changeBpm}
           />
-          <Row label="Metrônomo" hint={mark ? `No hinário: ${mark.min}${mark.max !== mark.min ? ` a ${mark.max}` : ''} ${UNIT_NAME[mark.unit] ?? 'semínimas'} por minuto` : undefined} last>
+          <Row label="Metrônomo" hint={mark ? `Na partitura: ${mark.min}${mark.max !== mark.min ? ` a ${mark.max}` : ''} ${UNIT_NAME[mark.unit] ?? 'semínimas'} por minuto` : undefined} last>
             <Toggle value={settings.metronome} onChange={(v) => settings.set({ metronome: v })} label="Metrônomo" />
           </Row>
         </Glass>
@@ -537,6 +538,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
         {!panel || playing ? (
           <View style={s.floating} pointerEvents="box-none">
             <RoundButton icon="pause" size={36} onPress={openPanel} accessibilityLabel="Pausar e abrir ajustes" />
+            <AvatarCircle id={settings.avatar} size={36} />
             <View style={s.floatingTrack}>
               <Scrubber thin onPaper={onPaper} measureStarts={measures} secondsPerBeat={p.timeline.secondsPerBeat} progress={p.progress} onSeek={p.seek} />
             </View>
@@ -595,7 +597,8 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
           ]}>
           {/* Cabeçalho: voltar · hino e linha do tempo · recomeçar · tocar */}
           <View style={s.header}>
-            <RoundButton icon="back" onPress={onExit} accessibilityLabel="Voltar ao hinário" />
+            <RoundButton icon="back" onPress={onExit} accessibilityLabel="Voltar à lista de músicas" />
+            <AvatarBadge size={44} />
             <Glass style={s.timelineBox}>
               <View style={s.titleRow}>
                 <Text style={[type.bold, s.hymnNumber, { color: pal.text }]}>{song.hymnNumber ?? ''}</Text>

@@ -3,8 +3,9 @@ import { describe, expect, it } from '@jest/globals';
 import type { Song } from '@/content/types';
 import { twoHands } from '@/content/notation';
 import { PracticeSession, type SessionEvent } from '@/engine/practice-session';
-import { getSong } from '@/content';
 import { buildTimeline } from '@/engine/timeline';
+
+import { coral } from './helpers/coral';
 
 const song: Song = {
   id: 't',
@@ -126,9 +127,9 @@ describe('exercícios de ritmo', () => {
   });
 });
 
-describe('hinos a 4 vozes', () => {
+describe('músicas a 4 vozes', () => {
   it('marca como ativas só as vozes escolhidas', () => {
-    const hymn = getSong('hino-001')!;
+    const hymn = coral();
     const tl = buildTimeline(hymn, { hands: 'right', voices: ['soprano'] });
     const active = tl.notes.filter((n) => n.active);
     expect(active.length).toBeGreaterThan(0);

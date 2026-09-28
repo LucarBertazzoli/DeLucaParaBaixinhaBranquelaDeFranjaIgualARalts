@@ -9,7 +9,7 @@ import { usePalette, useType } from '@/theme';
 
 /**
  * Cartões de apresentação: aparecem só na primeira vez que o app é aberto.
- * Mostram como escolher o hino, trocar órgão/piano, trocar partitura/notas
+ * Mostram como escolher a música, trocar órgão/piano, trocar partitura/notas
  * caindo e como o app ouve quem toca.
  */
 export function Onboarding() {
@@ -22,12 +22,12 @@ export function Onboarding() {
 
   const cards: { title: string; text: string; art: ReactNode }[] = [
     {
-      title: 'Bem-vindo ao Hinário',
-      text: 'Escolha um hino digitando o número ou o nome, ou girando a roda. Ele abre direto para tocar.',
+      title: 'Seu repertório',
+      text: 'Escolha uma música na lista; os grupos à esquerda levam direto a cada parte. Ela abre pronta para tocar. Tocando no seu avatar, você abre o seu perfil.',
       art: (
         <View style={[styles.searchArt, { backgroundColor: p.surface, borderColor: p.border }]}>
-          <Icon name="search" size={16} color={p.textDim} />
-          <Text style={[t.regular, styles.searchText, { color: p.textDim }]}>11 · Ó igreja de Deus…</Text>
+          <Icon name="music" size={16} color={p.textDim} />
+          <Text style={[t.regular, styles.searchText, { color: p.textDim }]}>3 · Eyes Open</Text>
         </View>
       ),
     },
@@ -50,7 +50,7 @@ export function Onboarding() {
     },
     {
       title: 'Partitura ou notas caindo',
-      text: 'Ao lado, o outro interruptor troca como ver a música: a partitura do hinário ou as notas caindo sobre as teclas.',
+      text: 'Ao lado, o outro interruptor troca como ver a música: a partitura ou as notas caindo sobre as teclas.',
       art: (
         <View style={styles.artCol}>
           <Segmented
