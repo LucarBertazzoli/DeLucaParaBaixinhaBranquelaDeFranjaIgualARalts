@@ -67,6 +67,8 @@ export interface SettingsState {
   recent: string[];
   /** Avatar escolhido na tela de boas-vindas (null = ainda não escolheu). */
   avatar: AvatarId | null;
+  /** Já respondeu (com Sim) a pergunta que aparece na primeira música. */
+  perguntaVista: boolean;
   /** Já viu os cartões de apresentação (primeira vez que abre o app). */
   onboarded: boolean;
   /** Já fechou o balão com a dica de reconhecimento das notas. */
@@ -96,6 +98,7 @@ const DEFAULTS: Omit<SettingsState, 'set'> = {
   fontChoice: 'serif',
   recent: [],
   avatar: null,
+  perguntaVista: false,
   onboarded: false,
   tipInputSeen: false,
 };
@@ -106,7 +109,7 @@ export const useSettings = create<SettingsState>()(
     {
       name: 'ccb-piano-settings',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 7,
+      version: 8,
       // Mantém as escolhas de quem já usa o app e completa os campos novos.
       // Fonte e destaque que ainda estavam no padrão antigo passam ao padrão
       // novo (serifada e #D81B60). Versões muito antigas voltam aos padrões.
