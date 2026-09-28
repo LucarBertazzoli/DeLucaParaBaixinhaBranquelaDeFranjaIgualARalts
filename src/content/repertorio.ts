@@ -39,8 +39,6 @@ export const REPERTORIO: RepertoireGroup[] = [
     songs: [
       { id: 'heartbeat', title: 'Heartbeat', artist: 'Childish Gambino' },
       { id: 'feel-so-close', title: 'Feel So Close', artist: 'Calvin Harris' },
-      { id: 'glad-you-came', title: 'Glad You Came', artist: 'The Wanted' },
-      { id: 'paradise', title: 'Paradise', artist: 'Coldplay' },
     ],
   },
   {
@@ -49,13 +47,6 @@ export const REPERTORIO: RepertoireGroup[] = [
     songs: [
       { id: 'story-of-my-life', title: 'Story of My Life' },
       { id: 'night-changes', title: 'Night Changes' },
-    ],
-  },
-  {
-    id: 'vampire-diaries',
-    label: 'The Vampire Diaries',
-    songs: [
-      { id: 'never-say-never', title: 'Never Say Never', artist: 'The Fray' },
     ],
   },
   {
