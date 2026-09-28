@@ -43,7 +43,7 @@ function RotateNotice() {
         <Icon name="touch" size={72} color={p.primary} />
       </Animated.View>
       <Text style={[t.bold, styles.title, { color: p.text }]}>Gire o celular</Text>
-      <Text style={[t.regular, styles.text, { color: p.textDim }]}>O Hinário funciona com o celular deitado.</Text>
+      <Text style={[t.regular, styles.text, { color: p.textDim }]}>O app funciona com o celular deitado.</Text>
     </View>
   );
 }

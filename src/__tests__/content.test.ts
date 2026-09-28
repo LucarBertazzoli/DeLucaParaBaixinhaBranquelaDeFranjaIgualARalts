@@ -2,25 +2,36 @@ import { describe, expect, it } from '@jest/globals';
 
 import { fitRange, keyboardLayout } from '@/components/keyboard-layout';
 import { getSong } from '@/content';
-import { HYMN_GROUPS, hymnCatalog } from '@/content/hymnal';
+import { scoreLoaders } from '@/content/partituras/registry';
+import { REPERTORIO, REPERTORIO_LISTA, repertoireSong } from '@/content/repertorio';
+import { hasScore } from '@/content/songs';
 
-describe('hinário', () => {
-  it('todos os hinos e coros carregam com as 4 vozes e compassos coerentes', () => {
-    const catalog = hymnCatalog();
-    expect(catalog).toHaveLength(486);
-    for (const entry of catalog) {
-      const song = getSong(entry.songId)!;
-      expect(song).toBeDefined();
-      expect(song.title).toBeTruthy();
-      for (const voice of ['soprano', 'alto', 'tenor', 'bass'] as const) {
-        const notes = song.notes.filter((n) => n.voice === voice);
-        expect(notes.length).toBeGreaterThan(0);
-        // Nenhuma nota passa do fim do hino.
-        expect(Math.max(...notes.map((n) => n.start + n.duration))).toBeLessThanOrEqual(song.endBeat! + 1e-6);
-      }
+describe('repertório', () => {
+  it('tem as 36 músicas em 8 grupos, com ids únicos', () => {
+    expect(REPERTORIO.map((g) => [g.label, g.songs.length])).toEqual([
+      ['Jogos Vorazes', 4],
+      ['Loki', 1],
+      ['Cinquenta Tons de Cinza', 4],
+      ['Pedidos avulsos', 7],
+      ['One Direction', 5],
+      ['The Vampire Diaries', 5],
+      ['Nirvana', 5],
+      ['Linkin Park', 5],
+    ]);
+    expect(new Set(REPERTORIO_LISTA.map((s) => s.id)).size).toBe(36);
+    expect(REPERTORIO_LISTA.at(-1)).toMatchObject({ number: 36, title: 'Crawling' });
+  });
+
+  it('toda partitura importada é de uma música do repertório e carrega', () => {
+    for (const id of Object.keys(scoreLoaders)) {
+      expect(repertoireSong(id)).toBeDefined();
+      const song = getSong(id)!;
+      expect(song.notes.length).toBeGreaterThan(0);
+      expect(Math.max(...song.notes.map((n) => n.start + n.duration))).toBeLessThanOrEqual(song.endBeat! + 1e-6);
       expect(song.measures![0]).toBe(0);
-      expect(song.sections!.length).toBeGreaterThan(0);
     }
+    // Sem partitura, a música fica na lista mas não abre.
+    for (const s of REPERTORIO_LISTA) expect(getSong(s.id) !== undefined).toBe(hasScore(s.id));
   });
 });
 
@@ -35,13 +46,5 @@ describe('layout do teclado', () => {
     const cs = layout.byMidi.get(61)!;
     expect(cs.x).toBeGreaterThan(c.x);
     expect(cs.x).toBeLessThan(c.x + c.width);
-  });
-});
-
-describe('grupos da tela inicial', () => {
-  it('tem as quantidades do hinário', () => {
-    const cat = hymnCatalog();
-    const count = Object.fromEntries(HYMN_GROUPS.map((g) => [g.id, cat.filter(g.includes).length]));
-    expect(count).toEqual({ hinos: 480, jovens: 50, coros: 6 });
   });
 });

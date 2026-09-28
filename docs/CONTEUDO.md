@@ -4,34 +4,38 @@ Todo o conteúdo é **dado** (TypeScript em `src/content/`). As telas não mudam
 quando entram hinos novos. No futuro, os mesmos objetos podem vir de
 uma API/JSON.
 
-## 1. Hinário (480 hinos + 6 coros)
+## 1. Repertório e partituras
 
-Os hinos ficam em `src/content/hinario/` (um arquivo `.json` por hino) e são
-gerados pelo importador a partir de partituras digitais do MuseScore:
+A lista de músicas (título, artista e grupo) fica em
+`src/content/repertorio.ts`. A tela inicial mostra todas, na ordem e com a
+divisão de lá. Cada música tem um `id` (ex.: `numb`, `safe-and-sound`).
+
+As partituras **não vêm com o app**: são músicas protegidas por direitos
+autorais, então cada uma entra por um arquivo que você tenha licença para usar
+(por exemplo, um arranjo comprado no Musescore.com ou no Musicnotes). Enquanto
+uma música não tem partitura, ela aparece na lista como “sem partitura”.
+
+Para importar:
+
+1. Exporte a partitura como **MusicXML** (`.musicxml`, `.xml` ou `.mxl` — no
+   MuseScore: *Arquivo → Exportar → MusicXML*). O ideal é um arranjo de piano
+   (duas pautas); com duas partes, a primeira vira a mão direita e a última,
+   a esquerda.
+2. Dê ao arquivo o nome do `id` da música: `numb.musicxml`.
+3. Rode:
 
 ```bash
-python3 scripts/importar-hinario.py <pasta-com-arquivos-.mscx> src/content/hinario
+python3 scripts/importar-partituras.py <pasta-com-os-arquivos>
 ```
 
-Fonte atual: partituras digitais a 4 vozes do Hinário nº 5
-(<https://github.com/eneiasramos/ccb-hinario-5-do>, pasta `do/musescore/xml`).
-O importador:
+O importador grava `src/content/partituras/<id>.json` e atualiza
+`registry.ts`. Ele lê notas, acordes, pausas, ligaduras, quiálteras,
+tonalidade, compasso, andamento e as quebras de linha (que viram os trechos
+“1ª linha”…; sem quebras, um trecho a cada 4 compassos). Ritornelos não são
+repetidos: a partitura é tocada de ponta a ponta.
 
-- separa soprano, contralto, tenor e baixo (pela altura em cada pauta);
-- lê pontos de aumento, ligaduras, quiálteras, pausas e anacruses;
-- mantém os compassos e as **linhas do hinário** (viram os trechos “1ª linha”…);
-- resolve os ritornelos de estrofes tocando o hino uma vez, pela casa final;
-- guarda título, autor, tonalidade, compasso e metrônomo (♩, ♪, ♩. ou mínima);
-- gera `registry.ts` (índice e carregamento sob demanda).
-
-No órgão, o app monta o **arranjo da organista** (`src/content/organ.ts`):
-mão direita soprano+contralto, mão esquerda tenor+baixo com notas repetidas
-seguradas (legato) e pedaleira a partir do baixo. O teste
-`src/__tests__/hymnal.test.ts` confere o hino 1 e o hino 5 com o hinário de
-órgão impresso.
-
-Para trocar a fonte (por exemplo, pelos arquivos oficiais da CCB), basta
-exportá-los para `.mscx` do MuseScore e rodar o importador de novo.
+Para apagar tudo depois: apague os `.json` de `src/content/partituras/` e rode
+o importador numa pasta vazia (o `registry.ts` volta a ficar vazio).
 
 ## 2. Notação de texto (testes)
 
@@ -61,6 +65,5 @@ Padrão de oitavas da CCB: **Dó central = Dó3** (no código, `C4` / MIDI 60).
 
 ## 3. Direitos autorais
 
-Hinos, estudos e materiais do MOR pertencem à Congregação Cristã no Brasil.
-Transcreva e publique partituras no app **somente com autorização**. Enquanto
-isso, o app abre os materiais pelos links oficiais.
+As partituras do repertório pertencem aos seus autores e editoras. Importe
+apenas arquivos que você tenha licença para usar, e só para uso pessoal.

@@ -1,6 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
 
-import { getSong } from '@/content';
 import { organArrangement } from '@/content/organ';
 import type { Voice } from '@/content/types';
 import { PracticeSession, type PracticeMode } from '@/engine/practice-session';
@@ -9,6 +8,7 @@ import { buildTimeline } from '@/engine/timeline';
 import { PitchProcessor } from '@/input/pitch/pitch-processor';
 import type { NoteInputEvent } from '@/input/types';
 
+import { coral } from './helpers/coral';
 import { OrganRoom, SR, type RoomOptions, type StopName } from './helpers/organ-room';
 
 /**
@@ -92,10 +92,10 @@ describe('microfone no órgão: acordes', () => {
   });
 });
 
-// ------------------------------------------------------------------ hino inteiro
+// ------------------------------------------------------------------ coral inteiro
 
 function hymn(mode: PracticeMode, policy: 'all' | 'any') {
-  const song = organArrangement(getSong('hino-001')!);
+  const song = organArrangement(coral());
   const timeline = buildTimeline(song, { hands: 'both', voices: ALL });
   const session = new PracticeSession({ timeline, mode, leadIn: 1, chordPolicy: policy, inputLatency: 0.12 });
   const processor = new PitchProcessor(SR, (e) => {
@@ -181,9 +181,9 @@ describe('microfone no órgão: cada nota do acorde conta', () => {
   });
 });
 
-// Simulam o hino inteiro (demoram minutos): rode com ORGAN_FULL=1 npm test.
-(process.env.ORGAN_FULL ? describe : describe.skip)('microfone no órgão: hino 1 inteiro', () => {
-  it('modo espera: o organista toca as 4 vozes + pedal e o hino vai até o fim', () => {
+// Simulam o coral inteiro (demoram minutos): rode com ORGAN_FULL=1 npm test.
+(process.env.ORGAN_FULL ? describe : describe.skip)('microfone no órgão: coral inteiro', () => {
+  it('modo espera: o organista toca as 4 vozes + pedal e o coral vai até o fim', () => {
     const { session, seconds, timeline } = playWaitMode('all');
     expect(session.status).toBe('finished');
     const score = session.score();

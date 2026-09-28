@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import type { Instrument } from '@/content/types';
+import type { AvatarId } from '@/features/perfil/avatares';
 import type { InputSourceKind } from '@/input/types';
 import type { Notation } from '@/music/theory';
 
@@ -62,8 +63,10 @@ export interface SettingsState {
   colorMode: 'mono' | 'color';
   colors: ColorChoices;
   fontChoice: FontChoice;
-  /** Últimos hinos abertos (ids), o mais recente primeiro. */
+  /** Últimas músicas abertas (ids), a mais recente primeiro. */
   recent: string[];
+  /** Avatar escolhido na tela de boas-vindas (null = ainda não escolheu). */
+  avatar: AvatarId | null;
   /** Já viu os cartões de apresentação (primeira vez que abre o app). */
   onboarded: boolean;
   /** Já fechou o balão com a dica de reconhecimento das notas. */
@@ -75,7 +78,7 @@ const DEFAULTS: Omit<SettingsState, 'set'> = {
   notation: 'solfege',
   noteLabels: 'name',
   showKeyLabels: true,
-  instrument: 'organ',
+  instrument: 'piano',
   inputSource: 'mic',
   micSensitivity: 0.004,
   micLatency: 0.12,
@@ -92,6 +95,7 @@ const DEFAULTS: Omit<SettingsState, 'set'> = {
   colors: DEFAULT_COLORS,
   fontChoice: 'serif',
   recent: [],
+  avatar: null,
   onboarded: false,
   tipInputSeen: false,
 };
@@ -102,7 +106,7 @@ export const useSettings = create<SettingsState>()(
     {
       name: 'ccb-piano-settings',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 6,
+      version: 7,
       // Mantém as escolhas de quem já usa o app e completa os campos novos.
       // Fonte e destaque que ainda estavam no padrão antigo passam ao padrão
       // novo (serifada e #D81B60). Versões muito antigas voltam aos padrões.
@@ -112,6 +116,8 @@ export const useSettings = create<SettingsState>()(
         // Volume e tamanho das teclas agora são fixos (médio e pequenas).
         prev.volume = DEFAULTS.volume;
         prev.keySize = DEFAULTS.keySize;
+        // O repertório mudou: os ids dos hinos abertos não existem mais.
+        if (version < 7) prev.recent = [];
         if (version < 5) {
           if (prev.fontChoice === 'verdana') prev.fontChoice = 'serif';
           if (prev.colors.accent === '#FF5A1F') prev.colors = { ...prev.colors, accent: DEFAULT_COLORS.accent };

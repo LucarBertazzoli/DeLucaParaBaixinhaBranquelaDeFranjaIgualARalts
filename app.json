@@ -24,12 +24,12 @@
     "web": {
       "output": "single",
       "favicon": "./assets/images/favicon.png",
-      "name": "Hinário CCB",
-      "shortName": "Hinário",
+      "name": "Repertório",
+      "shortName": "Repertório",
       "lang": "pt-BR",
       "themeColor": "#000000",
       "backgroundColor": "#000000",
-      "description": "Aprenda os hinos da CCB no teclado e no órgão: partitura, notas caindo e o app ouvindo você tocar."
+      "description": "Aprenda suas músicas no teclado: partitura, notas caindo e o app ouvindo você tocar."
     },
     "plugins": [
       "expo-router",

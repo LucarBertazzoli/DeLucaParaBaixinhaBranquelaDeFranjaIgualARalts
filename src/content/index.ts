@@ -1,9 +1,9 @@
-import { loadHymn } from './hymnal';
+import { loadSong } from './songs';
 import type { Song } from './types';
 
-/** Busca uma música (hoje, os hinos e coros do hinário). */
+/** Busca uma música do repertório (só as que já têm partitura importada). */
 export function getSong(id: string): Song | undefined {
-  return loadHymn(id);
+  return loadSong(id);
 }
 
 export type { Song } from './types';
