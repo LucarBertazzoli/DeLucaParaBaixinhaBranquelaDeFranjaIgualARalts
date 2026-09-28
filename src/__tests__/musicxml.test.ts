@@ -81,17 +81,17 @@ describe('reconhecer a música do arquivo', () => {
     expect(matchSong('Cant_Catch_Me_Now.musicxml')?.id).toBe('cant-catch-me-now');
     expect(matchSong('What_Ive_Done.musicxml')?.id).toBe('what-ive-done');
     expect(matchSong('arquivo.musicxml', 'Come As You Are (Piano)')?.id).toBe('come-as-you-are');
-    expect(matchSong('Eyes_Open.musicxml', 'Eyes Open')).toBeUndefined();
+    expect(matchSong('Eyes_Open.musicxml', 'Eyes Open')?.id).toBe('eyes-open');
   });
 });
 
 describe('partituras no aparelho', () => {
   it('uma partitura importada abre a música; apagada, some', () => {
-    expect(hasScore('paradise')).toBe(false);
-    usePartituras.getState().add('paradise', musicXmlToScore(XML));
-    expect(hasScore('paradise')).toBe(true);
-    expect(getSong('paradise')).toMatchObject({ title: 'Paradise', subtitle: 'Coldplay', hymnNumber: 8 });
-    usePartituras.getState().remove('paradise');
-    expect(getSong('paradise')).toBeUndefined();
+    expect(hasScore('loki-green-theme')).toBe(false);
+    usePartituras.getState().add('loki-green-theme', musicXmlToScore(XML));
+    expect(hasScore('loki-green-theme')).toBe(true);
+    expect(getSong('loki-green-theme')).toMatchObject({ title: 'Loki Green Theme', subtitle: 'Natalie Holt', hymnNumber: 5 });
+    usePartituras.getState().remove('loki-green-theme');
+    expect(getSong('loki-green-theme')).toBeUndefined();
   });
 });

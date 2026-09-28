@@ -23,6 +23,7 @@ export const REPERTORIO: RepertoireGroup[] = [
     label: 'Jogos Vorazes',
     songs: [
       { id: 'safe-and-sound', title: 'Safe & Sound', artist: 'Taylor Swift ft. The Civil Wars' },
+      { id: 'eyes-open', title: 'Eyes Open', artist: 'Taylor Swift' },
       { id: 'the-hanging-tree', title: 'The Hanging Tree', artist: 'James Newton Howard ft. Jennifer Lawrence' },
       { id: 'cant-catch-me-now', title: "Can't Catch Me Now", artist: 'Olivia Rodrigo' },
     ],
