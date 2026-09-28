@@ -38,29 +38,24 @@ export const REPERTORIO: RepertoireGroup[] = [
     songs: [
       { id: 'i-dont-wanna-live-forever', title: "I Don't Wanna Live Forever", artist: 'Zayn & Taylor Swift' },
       { id: 'love-me-like-you-do', title: 'Love Me Like You Do', artist: 'Ellie Goulding' },
-      { id: 'earned-it', title: 'Earned It', artist: 'The Weeknd' },
     ],
   },
   {
     id: 'pedidos-avulsos',
     label: 'Pedidos avulsos',
     songs: [
-      { id: 'talking-body', title: 'Talking Body', artist: 'Tove Lo' },
-      { id: 'black-sheep', title: 'Black Sheep', artist: 'Metric' },
       { id: 'heartbeat', title: 'Heartbeat', artist: 'Childish Gambino' },
       { id: 'feel-so-close', title: 'Feel So Close', artist: 'Calvin Harris' },
-      { id: 'chasing-the-sun', title: 'Chasing the Sun', artist: 'The Wanted' },
       { id: 'glad-you-came', title: 'Glad You Came', artist: 'The Wanted' },
+      { id: 'paradise', title: 'Paradise', artist: 'Coldplay' },
     ],
   },
   {
     id: 'one-direction',
     label: 'One Direction',
     songs: [
-      { id: 'what-makes-you-beautiful', title: 'What Makes You Beautiful' },
       { id: 'story-of-my-life', title: 'Story of My Life' },
       { id: 'night-changes', title: 'Night Changes' },
-      { id: 'best-song-ever', title: 'Best Song Ever' },
     ],
   },
   {
@@ -76,9 +71,6 @@ export const REPERTORIO: RepertoireGroup[] = [
     songs: [
       { id: 'smells-like-teen-spirit', title: 'Smells Like Teen Spirit' },
       { id: 'come-as-you-are', title: 'Come As You Are' },
-      { id: 'heart-shaped-box', title: 'Heart-Shaped Box' },
-      { id: 'lithium', title: 'Lithium' },
-      { id: 'in-bloom', title: 'In Bloom' },
     ],
   },
   {
@@ -86,7 +78,6 @@ export const REPERTORIO: RepertoireGroup[] = [
     label: 'Linkin Park',
     songs: [
       { id: 'in-the-end', title: 'In the End' },
-      { id: 'faint', title: 'Faint' },
       { id: 'what-ive-done', title: "What I've Done" },
     ],
   },
