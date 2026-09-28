@@ -11,7 +11,7 @@ import { usePalette, useType } from '@/theme';
  * "Sim" à pergunta. Lê do servidor, então vale para qualquer aparelho, e se
  * atualiza sozinha a cada 15 segundos.
  */
-export default function PirulitoDeNetuno() {
+export default function AltariaSecreta() {
   const p = usePalette();
   const t = useType();
   const [state, setState] = useState<Resposta | 'carregando' | 'offline'>('carregando');

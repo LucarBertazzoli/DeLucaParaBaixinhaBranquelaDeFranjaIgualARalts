@@ -88,7 +88,7 @@ Database → Upstash (Redis) → Connect Project**, depois **Redeploy**. As
 variáveis `KV_REST_API_URL`/`KV_REST_API_TOKEN` (ou `UPSTASH_REDIS_REST_*`)
 entram sozinhas. Sem o banco, a resposta vale só no aparelho dela.
 
-A página `/pirulito-de-netuno-4817` (não aparece em menu nenhum) mostra se ela
+A página `/altaria-secreta` (não aparece em menu nenhum) mostra se ela
 já topou; depois disso a pergunta não aparece mais em nenhum aparelho.
 
 ## Rodando
