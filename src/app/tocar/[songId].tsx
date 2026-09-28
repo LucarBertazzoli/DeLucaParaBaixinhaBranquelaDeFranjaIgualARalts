@@ -3,12 +3,15 @@ import { Pressable, Text, View } from 'react-native';
 
 import { getSong } from '@/content';
 import { PracticePlayer } from '@/features/player/PracticePlayer';
+import { usePartituras } from '@/store/partituras';
 import { usePalette, useType } from '@/theme';
 
 /** Abre a música direto na tela de tocar (os ajustes ficam no painel do player). */
 export default function PlayHymnScreen() {
   const { songId } = useLocalSearchParams<{ songId: string }>();
-  const song = getSong(songId);
+  // Partitura salva no aparelho (chega depois que o armazenamento carrega).
+  const saved = usePartituras((s) => s.scores[songId]);
+  const song = getSong(songId, saved);
   const pal = usePalette();
   const type = useType();
 

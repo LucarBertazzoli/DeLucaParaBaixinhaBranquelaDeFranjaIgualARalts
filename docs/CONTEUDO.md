@@ -15,7 +15,14 @@ autorais, então cada uma entra por um arquivo que você tenha licença para usa
 (por exemplo, um arranjo comprado no Musescore.com ou no Musicnotes). Enquanto
 uma música não tem partitura, ela aparece na lista como “sem partitura”.
 
-Para importar:
+**No próprio app (recomendado):** na lista de músicas, toque em
+**Importar** e escolha um ou vários arquivos `.musicxml` (cada um é
+reconhecido pelo nome do arquivo ou pelo título dentro dele), ou toque numa
+música “+ partitura” para escolher o arquivo dela. As partituras ficam
+guardadas **só naquele aparelho/navegador** — não entram no código nem no site
+publicado. Para apagar, use o Perfil → “Partituras neste aparelho”.
+
+**Pela linha de comando (entram no código do app, para todos):**
 
 1. Exporte a partitura como **MusicXML** (`.musicxml`, `.xml` ou `.mxl` — no
    MuseScore: *Arquivo → Exportar → MusicXML*). O ideal é um arranjo de piano

@@ -7,23 +7,26 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon } from '@/components/Icon';
 import { REPERTORIO, type RepertoireSong } from '@/content/repertorio';
 import { hasScore } from '@/content/songs';
+import { describe, importScores } from '@/features/partituras/importar';
 import { AvatarBadge } from '@/features/perfil/AvatarBadge';
 import { RoundButton } from '@/features/player/controls';
 import { AppearanceSettings } from '@/features/settings/AppearanceSettings';
+import { usePartituras } from '@/store/partituras';
 import { useSettings } from '@/store/settings';
 import { usePalette, useType } from '@/theme';
 import { withAlpha } from '@/theme/color';
 
 /**
  * Lista de músicas: os grupos à esquerda (tocar pula até o grupo) e, à
- * direita, todas as músicas com o nome de cada grupo por cima.
+ * direita, todas as músicas com o nome de cada grupo por cima. Partituras
+ * entram pelo botão "Importar" (várias de uma vez) ou tocando numa música
+ * ainda sem partitura; ficam guardadas só no aparelho.
  */
 
 // Numeração contínua, na ordem da lista.
 let counter = 0;
 const GRUPOS = REPERTORIO.map((g) => ({ ...g, songs: g.songs.map((s) => ({ ...s, number: ++counter })) }));
 const TOTAL = counter;
-const PRONTAS = GRUPOS.reduce((n, g) => n + g.songs.filter((s) => hasScore(s.id)).length, 0);
 
 function open(id: string) {
   const { recent, set } = useSettings.getState();
@@ -36,6 +39,19 @@ export default function Musicas() {
   const t = useType();
   const [look, setLook] = useState(false);
   const [active, setActive] = useState(GRUPOS[0].id);
+  const [notice, setNotice] = useState<string | null>(null);
+  // Partituras do aparelho: a lista muda quando uma entra ou sai.
+  const saved = usePartituras((s) => s.scores);
+  const prontas = GRUPOS.reduce((n, g) => n + g.songs.filter((s) => hasScore(s.id, saved)).length, 0);
+
+  const runImport = async (songId?: string) => {
+    try {
+      const r = await importScores(songId);
+      if (r) setNotice(describe(r));
+    } catch (e) {
+      setNotice(`Não deu para abrir o arquivo: ${e instanceof Error ? e.message : String(e)}`);
+    }
+  };
   const list = useRef<ScrollView>(null);
   const offsets = useRef<Record<string, number>>({});
 
@@ -56,7 +72,17 @@ export default function Musicas() {
       <View style={styles.top}>
         <AvatarBadge size={34} withName />
         <Text style={[t.bold, styles.brand, { color: p.textDim }]}>REPERTÓRIO</Text>
-        <RoundButton icon="contrast" size={38} onPress={() => setLook(true)} accessibilityLabel="Aparência: fonte e cores" />
+        <View style={styles.topActions}>
+          <Pressable
+            onPress={() => runImport()}
+            accessibilityRole="button"
+            accessibilityLabel="Importar partituras (MusicXML)"
+            style={({ pressed }) => [styles.importButton, { borderColor: p.border, backgroundColor: p.surface }, pressed && { opacity: 0.75 }]}>
+            <Icon name="plus" size={16} color={p.text} />
+            <Text style={[t.bold, styles.importText, { color: p.text }]}>Importar</Text>
+          </Pressable>
+          <RoundButton icon="contrast" size={38} onPress={() => setLook(true)} accessibilityLabel="Aparência: fonte e cores" />
+        </View>
       </View>
 
       <View style={styles.main}>
@@ -64,7 +90,7 @@ export default function Musicas() {
         <Animated.View entering={FadeInDown.duration(380)} style={styles.left}>
           <Text style={[t.regular, styles.heading, { color: p.text }]}>O que vamos tocar?</Text>
           <Text style={[t.regular, styles.sub, { color: p.textFaint }]}>
-            {TOTAL} músicas{PRONTAS < TOTAL ? ` · ${PRONTAS} com partitura` : ''}
+            {TOTAL} músicas{prontas < TOTAL ? ` · ${prontas} com partitura` : ''}
           </Text>
           <ScrollView style={styles.nav} showsVerticalScrollIndicator={false}>
             {GRUPOS.map((g) => {
@@ -103,7 +129,7 @@ export default function Musicas() {
                 </View>
                 <View style={[styles.card, { backgroundColor: p.surface, borderColor: p.border }]}>
                   {g.songs.map((s, i) => (
-                    <SongRow key={s.id} song={s} last={i === g.songs.length - 1} />
+                    <SongRow key={s.id} song={s} ready={hasScore(s.id, saved)} last={i === g.songs.length - 1} onImport={() => runImport(s.id)} />
                   ))}
                 </View>
               </View>
@@ -111,6 +137,15 @@ export default function Musicas() {
           </ScrollView>
         </Animated.View>
       </View>
+
+      {notice ? (
+        <Animated.View entering={FadeInDown.duration(200)} style={[styles.notice, { backgroundColor: p.surfaceStrong, borderColor: p.border }]}>
+          <Text style={[t.regular, styles.noticeText, { color: p.text }]}>{notice}</Text>
+          <Pressable onPress={() => setNotice(null)} hitSlop={10} accessibilityRole="button" accessibilityLabel="Fechar aviso">
+            <Icon name="close" size={16} color={p.textDim} />
+          </Pressable>
+        </Animated.View>
+      ) : null}
 
       {look ? (
         <Animated.View entering={FadeIn.duration(160)} style={[StyleSheet.absoluteFill, styles.sheet, { backgroundColor: withAlpha(p.bg, 0.96) }]}>
@@ -127,17 +162,24 @@ export default function Musicas() {
   );
 }
 
-function SongRow({ song, last }: { song: RepertoireSong & { number: number }; last: boolean }) {
+function SongRow({
+  song,
+  ready,
+  last,
+  onImport,
+}: {
+  song: RepertoireSong & { number: number };
+  ready: boolean;
+  last: boolean;
+  onImport: () => void;
+}) {
   const p = usePalette();
   const t = useType();
-  const ready = hasScore(song.id);
   return (
     <Pressable
-      onPress={() => open(song.id)}
-      disabled={!ready}
+      onPress={() => (ready ? open(song.id) : onImport())}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !ready }}
-      accessibilityLabel={`${song.title}${song.artist ? `, ${song.artist}` : ''}${ready ? '' : ', sem partitura'}`}
+      accessibilityLabel={`${song.title}${song.artist ? `, ${song.artist}` : ''}${ready ? '' : ', sem partitura: toque para importar'}`}
       style={({ pressed }) => [
         styles.row,
         !last && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.border },
@@ -159,7 +201,7 @@ function SongRow({ song, last }: { song: RepertoireSong & { number: number }; la
           <Icon name="play" size={13} color={p.primaryText} />
         </View>
       ) : (
-        <Text style={[t.regular, styles.missing, { color: p.textFaint, borderColor: p.border }]}>sem partitura</Text>
+        <Text style={[t.regular, styles.missing, { color: p.textFaint, borderColor: p.border }]}>+ partitura</Text>
       )}
     </Pressable>
   );
@@ -176,6 +218,23 @@ const styles = StyleSheet.create({
     paddingBottom: 4,
   },
   brand: { fontSize: 11, letterSpacing: 2.4 },
+  topActions: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  importButton: { flexDirection: 'row', alignItems: 'center', gap: 6, height: 38, borderRadius: 19, borderWidth: 1, paddingHorizontal: 14 },
+  importText: { fontSize: 13 },
+  notice: {
+    position: 'absolute',
+    bottom: 16,
+    alignSelf: 'center',
+    maxWidth: 620,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    borderRadius: 16,
+    borderWidth: 1,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  noticeText: { fontSize: 13, flexShrink: 1 },
   main: {
     flex: 1,
     flexDirection: 'row',
