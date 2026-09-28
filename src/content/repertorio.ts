@@ -33,14 +33,6 @@ export const REPERTORIO: RepertoireGroup[] = [
     songs: [{ id: 'loki-green-theme', title: 'Loki Green Theme', artist: 'Natalie Holt' }],
   },
   {
-    id: 'cinquenta-tons',
-    label: 'Cinquenta Tons de Cinza',
-    songs: [
-      { id: 'i-dont-wanna-live-forever', title: "I Don't Wanna Live Forever", artist: 'Zayn & Taylor Swift' },
-      { id: 'love-me-like-you-do', title: 'Love Me Like You Do', artist: 'Ellie Goulding' },
-    ],
-  },
-  {
     id: 'pedidos-avulsos',
     label: 'Pedidos avulsos',
     songs: [
