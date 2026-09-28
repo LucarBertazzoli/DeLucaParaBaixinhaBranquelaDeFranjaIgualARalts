@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import Animated, { FadeIn, FadeOut, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +14,7 @@ import { perguntaAt } from '@/engine/pergunta';
 import type { PracticeMode } from '@/engine/practice-session';
 import { AvatarBadge, AvatarCircle } from '@/features/perfil/AvatarBadge';
 import { Pergunta } from '@/features/surpresa/Pergunta';
+import { enviarResposta } from '@/features/surpresa/resposta';
 import { AppearanceSettings } from '@/features/settings/AppearanceSettings';
 import { inputHub } from '@/input/input-hub';
 import type { InputSourceKind, KeyTarget } from '@/input/types';
@@ -103,7 +104,9 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
     const chosen = customVoices ?? (Object.keys(parts) as Part[]).filter((k) => parts[k]).flatMap((k) => PART_VOICES[k]);
     return organ ? chosen : chosen.filter((v) => v !== 'pedal');
   }, [customVoices, parts, organ]);
-  const mode: PracticeMode = voices.length === 0 ? 'demo' : waitMode ? 'wait' : 'rhythm';
+  // Interruptor Ouvir | Tocar: no Ouvir o app toca a música sozinho.
+  const [listen, setListen] = useState(false);
+  const mode: PracticeMode = listen || voices.length === 0 ? 'demo' : waitMode ? 'wait' : 'rhythm';
 
   const p = usePractice({
     song,
@@ -136,6 +139,22 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
     p.start();
   };
 
+  // Ligar o Ouvir já põe o app para tocar (na sessão nova, criada com o modo).
+  const startAfterSwitch = useRef(false);
+  const changeListen = (value: boolean) => {
+    setListen(value);
+    if (value) {
+      setPanel(false);
+      startAfterSwitch.current = true;
+    }
+  };
+  const start = p.start;
+  useEffect(() => {
+    if (!startAfterSwitch.current) return;
+    startAfterSwitch.current = false;
+    start();
+  }, [p.session, start]);
+
   // ------------------------------------------------------------- a pergunta
   // Na primeira música tocada, perto do fim da primeira linha, a música para
   // e aparece o balão. Depois do "Sim" não aparece mais.
@@ -146,8 +165,12 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
   useEffect(() => {
     if (asking) pause();
   }, [asking, pause]);
-  const answered = () => {
-    settings.set({ perguntaVista: true });
+  // O "Sim" já grava a resposta (aqui e no servidor); o "Continuar" fecha.
+  const saidYes = () => {
+    settings.set({ perguntaVista: true, respostaPendente: true });
+    void enviarResposta();
+  };
+  const closeQuestion = () => {
     setAsking(false);
     play();
   };
@@ -560,7 +583,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
             <View style={s.floatingTrack}>
               <Scrubber thin onPaper={onPaper} measureStarts={measures} secondsPerBeat={p.timeline.secondsPerBeat} progress={p.progress} onSeek={p.seek} />
             </View>
-            <ModeSwitches />
+            <ModeSwitches listen={listen} onListen={changeListen} />
           </View>
         ) : null}
 
@@ -638,7 +661,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
               </View>
               <Scrubber measureStarts={measures} secondsPerBeat={p.timeline.secondsPerBeat} progress={p.progress} onSeek={p.seek} />
             </Glass>
-            <ModeSwitches stacked />
+            <ModeSwitches stacked listen={listen} onListen={changeListen} />
             <RoundButton icon="restart" onPress={() => p.seek(0)} accessibilityLabel="Voltar ao começo" />
             <RoundButton icon="play" size={52} active onPress={play} accessibilityLabel={p.status === 'paused' ? 'Continuar' : 'Tocar'} />
           </View>
@@ -692,7 +715,7 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
         </Animated.View>
       ) : null}
 
-      {asking ? <Pergunta onDone={answered} /> : null}
+      {asking ? <Pergunta onYes={saidYes} onDone={closeQuestion} /> : null}
     </View>
   );
 }
@@ -701,12 +724,33 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
  * Os dois interruptores do canto superior direito: como ver a música
  * (Partitura ou Notas caindo) e qual instrumento (Órgão ou Piano).
  */
-export function ModeSwitches({ stacked }: { stacked?: boolean }) {
+export function ModeSwitches({
+  stacked,
+  listen,
+  onListen,
+}: {
+  stacked?: boolean;
+  listen: boolean;
+  onListen: (listen: boolean) => void;
+}) {
   const viewMode = useSettings((st) => st.viewMode);
   const instrument = useSettings((st) => st.instrument);
   const set = useSettings((st) => st.set);
+  const listenSwitch = (
+    <Segmented
+      compact
+      options={[
+        { value: 'listen', label: 'Ouvir' },
+        { value: 'play', label: 'Tocar' },
+      ]}
+      value={listen ? 'listen' : 'play'}
+      onChange={(v) => onListen(v === 'listen')}
+    />
+  );
   return (
-    <View style={stacked ? s.switchesStacked : s.switches}>
+    <View style={s.switches}>
+      {listenSwitch}
+      <View style={stacked ? s.switchesStacked : s.switches}>
       <Segmented
         compact
         options={[
@@ -725,6 +769,7 @@ export function ModeSwitches({ stacked }: { stacked?: boolean }) {
         value={instrument}
         onChange={(v) => set({ instrument: v as 'organ' | 'piano' })}
       />
+      </View>
     </View>
   );
 }
@@ -775,7 +820,7 @@ const s = StyleSheet.create({
     gap: 12,
   },
   floatingTrack: { flex: 1 },
-  switches: { flexDirection: 'row', gap: 8 },
+  switches: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   switchesStacked: { gap: 4, alignItems: 'stretch' },
   waitBadge: {
     position: 'absolute',

@@ -1,7 +1,15 @@
 import { router } from 'expo-router';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeInDown,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Icon } from '@/components/Icon';
@@ -183,13 +191,18 @@ function SongRow({
       style={({ pressed }) => [
         styles.row,
         !last && { borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: p.border },
+        song.destaque && { backgroundColor: withAlpha(p.primary, 0.16) },
         pressed && { backgroundColor: p.surfaceStrong },
       ]}>
+      {song.destaque ? <View style={[styles.featuredBar, { backgroundColor: p.primary }]} /> : null}
       <Text style={[t.bold, styles.number, { color: ready ? p.text : p.textFaint }]}>{song.number}</Text>
       <View style={styles.rowText}>
-        <Text style={[t.regular, styles.title, { color: ready ? p.text : p.textDim }]} numberOfLines={1}>
-          {song.title}
-        </Text>
+        <View style={styles.titleRow}>
+          <Text style={[song.destaque ? t.bold : t.regular, styles.title, { color: ready ? p.text : p.textDim }]} numberOfLines={1}>
+            {song.title}
+          </Text>
+          {song.destaque ? <FeaturedBadge /> : null}
+        </View>
         {song.artist ? (
           <Text style={[t.regular, styles.artist, { color: p.textFaint }]} numberOfLines={1}>
             {song.artist}
@@ -204,6 +217,22 @@ function SongRow({
         <Text style={[t.regular, styles.missing, { color: p.textFaint, borderColor: p.border }]}>+ partitura</Text>
       )}
     </Pressable>
+  );
+}
+
+/** Selo "Recomendada" que pulsa de leve, para chamar a atenção. */
+function FeaturedBadge() {
+  const p = usePalette();
+  const t = useType();
+  const pulse = useSharedValue(1);
+  useEffect(() => {
+    pulse.set(withRepeat(withSequence(withTiming(1.08, { duration: 700 }), withTiming(1, { duration: 700 })), -1));
+  }, [pulse]);
+  const style = useAnimatedStyle(() => ({ transform: [{ scale: pulse.value }] }));
+  return (
+    <Animated.View style={[styles.badge, { backgroundColor: p.primary }, style]}>
+      <Text style={[t.bold, styles.badgeText, { color: p.primaryText }]}>★ Recomendada</Text>
+    </Animated.View>
   );
 }
 
@@ -262,7 +291,11 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: 14, paddingHorizontal: 18, minHeight: 54, paddingVertical: 8 },
   number: { fontSize: 14, minWidth: 24, textAlign: 'right' },
   rowText: { flex: 1, gap: 2 },
-  title: { fontSize: 15 },
+  title: { fontSize: 15, flexShrink: 1 },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  featuredBar: { position: 'absolute', left: 0, top: 0, bottom: 0, width: 4 },
+  badge: { borderRadius: 999, paddingHorizontal: 9, paddingVertical: 3 },
+  badgeText: { fontSize: 11, letterSpacing: 0.3 },
   artist: { fontSize: 12 },
   play: { width: 30, height: 30, borderRadius: 15, alignItems: 'center', justifyContent: 'center' },
   missing: { fontSize: 11, borderWidth: 1, borderRadius: 999, paddingHorizontal: 10, paddingVertical: 3, overflow: 'hidden' },

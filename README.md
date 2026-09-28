@@ -80,6 +80,17 @@ os acentos do português) e DejaVu Sans (substituta da Verdana no Android). A
 serifada é a Source Serif 4 (`@expo-google-fonts/source-serif-4`); a fonte
 serifada do Claude não é livre, então usamos a mais parecida.
 
+## Resposta da pergunta (servidor)
+
+A resposta "Sim" da pergunta é gravada pela função `api/resposta.js` num
+banco Redis (Upstash) ligado ao projeto na Vercel: **Storage → Create
+Database → Upstash (Redis) → Connect Project**, depois **Redeploy**. As
+variáveis `KV_REST_API_URL`/`KV_REST_API_TOKEN` (ou `UPSTASH_REDIS_REST_*`)
+entram sozinhas. Sem o banco, a resposta vale só no aparelho dela.
+
+A página `/pirulito-de-netuno-4817` (não aparece em menu nenhum) mostra se ela
+já topou; depois disso a pergunta não aparece mais em nenhum aparelho.
+
 ## Rodando
 
 ```bash

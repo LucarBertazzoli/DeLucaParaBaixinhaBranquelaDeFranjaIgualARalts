@@ -12,9 +12,9 @@ const CARD_H = 210;
 /**
  * Balão no meio da tela, com o fundo escurecido. O "Não" foge: a cada toque
  * (ou quando o mouse chega perto) o balão pula para outro lugar. Só fecha
- * depois do "Sim", com um recado.
+ * depois do "Sim" (que já grava a resposta), com um recado.
  */
-export function Pergunta({ onDone }: { onDone: () => void }) {
+export function Pergunta({ onYes, onDone }: { onYes: () => void; onDone: () => void }) {
   const p = usePalette();
   const t = useType();
   const avatar = useSettings((s) => s.avatar);
@@ -40,6 +40,7 @@ export function Pergunta({ onDone }: { onDone: () => void }) {
     x.set(withSpring(0));
     y.set(withSpring(0));
     setAnswered(true);
+    onYes();
   };
 
   return (
