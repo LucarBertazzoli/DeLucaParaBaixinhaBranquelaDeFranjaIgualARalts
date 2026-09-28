@@ -27,7 +27,7 @@ export function Onboarding() {
       art: (
         <View style={[styles.searchArt, { backgroundColor: p.surface, borderColor: p.border }]}>
           <Icon name="music" size={16} color={p.textDim} />
-          <Text style={[t.regular, styles.searchText, { color: p.textDim }]}>3 · Eyes Open</Text>
+          <Text style={[t.regular, styles.searchText, { color: p.textDim }]}>2 · The Hanging Tree</Text>
         </View>
       ),
     },

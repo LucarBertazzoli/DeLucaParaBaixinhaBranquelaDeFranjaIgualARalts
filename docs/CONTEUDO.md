@@ -8,7 +8,7 @@ uma API/JSON.
 
 A lista de músicas (título, artista e grupo) fica em
 `src/content/repertorio.ts`. A tela inicial mostra todas, na ordem e com a
-divisão de lá. Cada música tem um `id` (ex.: `numb`, `safe-and-sound`).
+divisão de lá. Cada música tem um `id` (ex.: `faint`, `safe-and-sound`).
 
 As partituras **não vêm com o app**: são músicas protegidas por direitos
 autorais, então cada uma entra por um arquivo que você tenha licença para usar
@@ -21,7 +21,7 @@ Para importar:
    MuseScore: *Arquivo → Exportar → MusicXML*). O ideal é um arranjo de piano
    (duas pautas); com duas partes, a primeira vira a mão direita e a última,
    a esquerda.
-2. Dê ao arquivo o nome do `id` da música: `numb.musicxml`.
+2. Dê ao arquivo o nome do `id` da música: `faint.musicxml`.
 3. Rode:
 
 ```bash
