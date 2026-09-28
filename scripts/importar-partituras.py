@@ -7,7 +7,7 @@ Uso:
     python3 scripts/importar-partituras.py <pasta-com-partituras> [saida]
 
 Cada arquivo tem o nome do id da música em src/content/repertorio.ts, por
-exemplo `numb.musicxml`, `numb.xml` ou `numb.mxl` (MusicXML compactado). Quase
+exemplo `faint.musicxml`, `faint.xml` ou `faint.mxl` (MusicXML compactado). Quase
 todo editor de partitura exporta MusicXML (MuseScore, Sibelius, Finale,
 Dorico, Musicnotes...).
 
