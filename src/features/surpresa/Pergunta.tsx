@@ -12,7 +12,7 @@ const CARD_H = 210;
 /**
  * Balão no meio da tela, com o fundo escurecido. O "Não" foge: a cada toque
  * (ou quando o mouse chega perto) o balão pula para outro lugar. Só fecha
- * depois do "Sim" (que já grava a resposta), com um recado.
+ * depois do "Sim" (que já grava a resposta), com uma piscadinha.
  */
 export function Pergunta({ onYes, onDone }: { onYes: () => void; onDone: () => void }) {
   const p = usePalette();
@@ -50,7 +50,9 @@ export function Pergunta({ onYes, onDone }: { onYes: () => void; onDone: () => v
           <AvatarCircle id={avatar} size={52} />
           {answered ? (
             <Animated.View key="recado" entering={FadeIn.duration(260)} style={styles.body}>
-              <Text style={[t.bold, styles.question, { color: p.text }]}>Você fica linda quando faz essa cara.</Text>
+              <Text style={[t.bold, styles.wink, { color: p.text }]} accessibilityLabel="Piscadinha">
+                ;)
+              </Text>
               <Pressable
                 onPress={onDone}
                 accessibilityRole="button"
@@ -104,6 +106,7 @@ const styles = StyleSheet.create({
   body: { alignItems: 'center', gap: 12 },
   before: { fontSize: 13 },
   question: { fontSize: 19, lineHeight: 26, textAlign: 'center' },
+  wink: { fontSize: 56, lineHeight: 64, textAlign: 'center' },
   buttons: { flexDirection: 'row', gap: 12, marginTop: 4 },
   button: { height: 44, minWidth: 110, borderRadius: 22, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 22 },
   no: { borderWidth: 1 },
