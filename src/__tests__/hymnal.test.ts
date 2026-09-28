@@ -41,10 +41,10 @@ const FILE: ScoreFile = {
 
 describe('partituras importadas', () => {
   it('converte o arquivo compacto: batidas, mãos, vozes e trechos', () => {
-    const s = songFromFile('faint', FILE);
+    const s = songFromFile('in-the-end', FILE);
     // O título e o artista vêm do repertório.
-    expect(s.title).toBe('Faint');
-    expect(s.hymnNumber).toBe(25);
+    expect(s.title).toBe('In the End');
+    expect(s.hymnNumber).toBe(16);
     expect(s.keySignature).toBe(-1);
     expect(s.timeSignature).toEqual([3, 4]);
     expect(s.measures).toEqual([0, 1, 4]);
