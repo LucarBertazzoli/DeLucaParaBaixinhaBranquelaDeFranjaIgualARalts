@@ -13,6 +13,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { synth } from '@/audio/synth';
 import { RotateGate } from '@/components/RotateGate';
 import { Onboarding } from '@/features/onboarding/Onboarding';
+import { sincronizarResposta } from '@/features/surpresa/resposta';
 import { useSettings } from '@/store/settings';
 
 const theme = {
@@ -57,6 +58,11 @@ export default function RootLayout() {
     }
   }, []);
 
+  // Resposta da pergunta: reenvia se ficou pendente e respeita o que já foi respondido.
+  useEffect(() => {
+    if (hydrated) void sincronizarResposta();
+  }, [hydrated]);
+
   useEffect(() => {
     synth.setInstrument(instrument);
     synth.setVolume(volume);
@@ -74,7 +80,8 @@ export default function RootLayout() {
             <Stack.Screen name="tocar/[songId]" options={{ gestureEnabled: false }} />
           </Stack>
           {hydrated && !onboarded && pathname === '/musicas' ? <Onboarding /> : null}
-          <RotateGate />
+          {/* A página secreta abre em pé também. */}
+          {pathname !== '/pirulito-de-netuno-4817' ? <RotateGate /> : null}
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

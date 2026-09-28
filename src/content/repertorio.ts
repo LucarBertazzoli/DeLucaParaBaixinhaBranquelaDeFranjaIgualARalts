@@ -9,6 +9,8 @@ export interface RepertoireSong {
   id: string;
   title: string;
   artist?: string;
+  /** Recomendação: aparece em destaque na lista. */
+  destaque?: boolean;
 }
 
 export interface RepertoireGroup {
@@ -45,7 +47,7 @@ export const REPERTORIO: RepertoireGroup[] = [
     id: 'one-direction',
     label: 'One Direction',
     songs: [
-      { id: 'story-of-my-life', title: 'Story of My Life' },
+      { id: 'story-of-my-life', title: 'Story of My Life', destaque: true },
       { id: 'night-changes', title: 'Night Changes' },
     ],
   },
