@@ -83,7 +83,7 @@ export default function RootLayout() {
           {hydrated && !onboarded && pathname === '/musicas' ? <Onboarding /> : null}
           <IphoneNotice />
           {/* A página secreta abre em pé também. */}
-          {pathname !== '/pirulito-de-netuno-4817' ? <RotateGate /> : null}
+          {pathname !== '/altaria-secreta' ? <RotateGate /> : null}
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
