@@ -10,8 +10,10 @@ import { NoteHighway } from '@/components/NoteHighway';
 import { PedalBoard } from '@/components/PedalBoard';
 import { PianoKeyboard } from '@/components/PianoKeyboard';
 import type { Song, Voice } from '@/content/types';
+import { perguntaAt } from '@/engine/pergunta';
 import type { PracticeMode } from '@/engine/practice-session';
 import { AvatarBadge, AvatarCircle } from '@/features/perfil/AvatarBadge';
+import { Pergunta } from '@/features/surpresa/Pergunta';
 import { AppearanceSettings } from '@/features/settings/AppearanceSettings';
 import { inputHub } from '@/input/input-hub';
 import type { InputSourceKind, KeyTarget } from '@/input/types';
@@ -132,6 +134,22 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
     setPanel(false);
     if (p.status === 'finished') p.restart();
     p.start();
+  };
+
+  // ------------------------------------------------------------- a pergunta
+  // Na primeira música tocada, perto do fim da primeira linha, a música para
+  // e aparece o balão. Depois do "Sim" não aparece mais.
+  const [asking, setAsking] = useState(false);
+  const askAt = perguntaAt(p.timeline);
+  if (!settings.perguntaVista && !asking && playing && p.progress >= askAt) setAsking(true);
+  const pause = p.pause;
+  useEffect(() => {
+    if (asking) pause();
+  }, [asking, pause]);
+  const answered = () => {
+    settings.set({ perguntaVista: true });
+    setAsking(false);
+    play();
   };
 
   // ------------------------------------------------------------- entrada (tela/MIDI/microfone)
@@ -673,6 +691,8 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
           </View>
         </Animated.View>
       ) : null}
+
+      {asking ? <Pergunta onDone={answered} /> : null}
     </View>
   );
 }
