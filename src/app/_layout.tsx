@@ -1,3 +1,5 @@
+// Celular em pé no navegador: gira o app para continuar em paisagem.
+import '@/web/paisagem';
 import { SourceSerif4_400Regular } from '@expo-google-fonts/source-serif-4/400Regular';
 import { SourceSerif4_700Bold } from '@expo-google-fonts/source-serif-4/700Bold';
 import { useFonts } from 'expo-font';
@@ -12,7 +14,6 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { synth } from '@/audio/synth';
 import { IphoneNotice } from '@/components/IphoneNotice';
-import { RotateGate } from '@/components/RotateGate';
 import { Onboarding } from '@/features/onboarding/Onboarding';
 import { sincronizarResposta } from '@/features/surpresa/resposta';
 import { useSettings } from '@/store/settings';
@@ -82,8 +83,6 @@ export default function RootLayout() {
           </Stack>
           {hydrated && !onboarded && pathname === '/musicas' ? <Onboarding /> : null}
           <IphoneNotice />
-          {/* A página secreta abre em pé também. */}
-          {pathname !== '/altaria-secreta' ? <RotateGate /> : null}
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
