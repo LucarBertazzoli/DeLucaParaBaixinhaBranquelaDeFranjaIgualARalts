@@ -63,7 +63,7 @@ export function Pergunta({ onYes, onDone }: { onYes: () => void; onDone: () => v
           ) : (
             <View style={styles.body}>
               <Text style={[t.regular, styles.before, { color: p.textDim }]}>Antes de continuar…</Text>
-              <Text style={[t.bold, styles.question, { color: p.text }]}>Topa voltar a nos conhecermos e ir devagar?</Text>
+              <Text style={[t.bold, styles.question, { color: p.text }]}>Flá, topa voltar a nos conhecermos e ir devagar?</Text>
               <View style={styles.buttons}>
                 <Pressable
                   onPress={yes}
