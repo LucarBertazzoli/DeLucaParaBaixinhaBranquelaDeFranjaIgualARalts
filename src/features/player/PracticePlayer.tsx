@@ -10,7 +10,6 @@ import { NoteHighway } from '@/components/NoteHighway';
 import { PedalBoard } from '@/components/PedalBoard';
 import { PianoKeyboard } from '@/components/PianoKeyboard';
 import type { Song, Voice } from '@/content/types';
-import { perguntaAt } from '@/engine/pergunta';
 import type { PracticeMode } from '@/engine/practice-session';
 import { AvatarBadge, AvatarCircle } from '@/features/perfil/AvatarBadge';
 import { Pergunta } from '@/features/surpresa/Pergunta';
@@ -80,6 +79,9 @@ const COMPUTER_KEYS: Record<string, { midi: number; row: 'upper' | 'lower' }> = 
 };
 const UNIT_NAME: Record<string, string> = { q: 'semínimas', e: 'colcheias', 'q.': 'semínimas pontuadas', h: 'mínimas' };
 
+/** Na 10ª tecla que ela tocar, aparece a pergunta. */
+const PERGUNTA_TECLA = 10;
+
 /**
  * Tela de tocar um hino. Enquanto toca: só a música e o teclado. Ao pausar,
  * abre o painel (inspirado no Artie): linha do tempo arrastável em cima e os
@@ -104,8 +106,9 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
     const chosen = customVoices ?? (Object.keys(parts) as Part[]).filter((k) => parts[k]).flatMap((k) => PART_VOICES[k]);
     return organ ? chosen : chosen.filter((v) => v !== 'pedal');
   }, [customVoices, parts, organ]);
-  // Interruptor Ouvir | Tocar: no Ouvir o app toca a música sozinho.
-  const [listen, setListen] = useState(false);
+  // Interruptor Ouvir | Tocar: no Ouvir o app toca a música sozinho. A música
+  // abre no Ouvir, já tocando.
+  const [listen, setListen] = useState(true);
   const mode: PracticeMode = listen || voices.length === 0 ? 'demo' : waitMode ? 'wait' : 'rhythm';
 
   const p = usePractice({
@@ -123,12 +126,13 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
   };
 
   // ------------------------------------------------------------- painel
-  const [panelState, setPanel] = useState(true);
+  const [panelState, setPanel] = useState(false);
   const [tab, setTab] = useState<Tab>('practice');
   const [showVoices, setShowVoices] = useState(false);
   const playing = p.status === 'playing' || p.status === 'waiting';
-  // Ao terminar o hino, o painel volta sozinho.
-  const panel = panelState || p.status === 'finished';
+  // Ao terminar de tocar, o painel volta sozinho (no Ouvir, fica a partitura
+  // com o balão "aprender a tocar").
+  const panel = panelState || (p.status === 'finished' && !listen);
   const openPanel = () => {
     p.pause();
     setPanel(true);
@@ -139,14 +143,14 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
     p.start();
   };
 
-  // Ligar o Ouvir já põe o app para tocar (na sessão nova, criada com o modo).
-  const startAfterSwitch = useRef(false);
+  // Trocar Ouvir/Tocar já começa (na sessão nova, criada com o modo). Ao abrir
+  // a música também: começa ouvindo.
+  const startAfterSwitch = useRef(true);
   const changeListen = (value: boolean) => {
+    if (value === listen) return;
     setListen(value);
-    if (value) {
-      setPanel(false);
-      startAfterSwitch.current = true;
-    }
+    setPanel(false);
+    startAfterSwitch.current = true;
   };
   const start = p.start;
   useEffect(() => {
@@ -156,11 +160,24 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
   }, [p.session, start]);
 
   // ------------------------------------------------------------- a pergunta
-  // Na primeira música tocada, perto do fim da primeira linha, a música para
-  // e aparece o balão. Depois do "Sim" não aparece mais.
+  // Quando ela está tocando (no Tocar) e aperta a 10ª tecla, a música para e
+  // aparece o balão. Depois do "Sim" não aparece mais.
   const [asking, setAsking] = useState(false);
-  const askAt = perguntaAt(p.timeline);
-  if (!settings.perguntaVista && !asking && playing && p.progress >= askAt) setAsking(true);
+  const keysPlayed = useRef(0);
+  const askState = useRef({ listen, playing, vista: settings.perguntaVista });
+  useEffect(() => {
+    askState.current = { listen, playing, vista: settings.perguntaVista };
+  }, [listen, playing, settings.perguntaVista]);
+  useEffect(
+    () =>
+      inputHub.subscribe((e) => {
+        const st = askState.current;
+        if (e.type !== 'on' || st.listen || !st.playing || st.vista) return;
+        keysPlayed.current += 1;
+        if (keysPlayed.current === PERGUNTA_TECLA) setAsking(true);
+      }),
+    [],
+  );
   const pause = p.pause;
   useEffect(() => {
     if (asking) pause();
@@ -749,7 +766,11 @@ export function ModeSwitches({
   );
   return (
     <View style={s.switches}>
-      {listenSwitch}
+      <View>
+        {listenSwitch}
+        {/* No Ouvir, um balãozinho aponta para o Tocar. */}
+        {listen && !stacked ? <LearnTip onPress={() => onListen(false)} /> : null}
+      </View>
       <View style={stacked ? s.switchesStacked : s.switches}>
       <Segmented
         compact
@@ -771,6 +792,23 @@ export function ModeSwitches({
       />
       </View>
     </View>
+  );
+}
+
+/** Balão "Clique aqui para aprender a tocar", apontando para o Tocar. */
+function LearnTip({ onPress }: { onPress: () => void }) {
+  const pal = usePalette();
+  const type = useType();
+  return (
+    <Animated.View entering={FadeIn.delay(1500).duration(300)} style={s.learnTip}>
+      <View style={[s.learnArrow, { borderBottomColor: pal.primary }]} />
+      <Pressable
+        onPress={onPress}
+        accessibilityRole="button"
+        style={({ pressed }) => [s.learnBody, { backgroundColor: pal.primary }, pressed && { opacity: 0.85 }]}>
+        <Text style={[type.bold, s.learnText, { color: pal.primaryText }]}>Clique aqui para aprender a tocar</Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
@@ -821,6 +859,19 @@ const s = StyleSheet.create({
   },
   floatingTrack: { flex: 1 },
   switches: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  learnTip: { position: 'absolute', top: '100%', right: 0, marginTop: 6, alignItems: 'flex-end', zIndex: 30 },
+  learnArrow: {
+    width: 0,
+    height: 0,
+    marginRight: 22,
+    borderLeftWidth: 7,
+    borderRightWidth: 7,
+    borderBottomWidth: 8,
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+  },
+  learnBody: { borderRadius: 14, paddingHorizontal: 14, paddingVertical: 9, width: 190 },
+  learnText: { fontSize: 13, lineHeight: 18, textAlign: 'center' },
   switchesStacked: { gap: 4, alignItems: 'stretch' },
   waitBadge: {
     position: 'absolute',
