@@ -7,7 +7,8 @@
  *   POST /api/resposta → grava que ela topou (a primeira data fica)
  */
 
-const KEY = 'repertorio:resposta';
+// v2: pergunta reiniciada; respostas anteriores não contam.
+const KEY = 'repertorio:resposta:v2';
 
 function redisConfig() {
   const url = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_URL;

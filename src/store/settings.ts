@@ -112,7 +112,7 @@ export const useSettings = create<SettingsState>()(
     {
       name: 'ccb-piano-settings',
       storage: createJSONStorage(() => AsyncStorage),
-      version: 9,
+      version: 10,
       // Mantém as escolhas de quem já usa o app e completa os campos novos.
       // Fonte e destaque que ainda estavam no padrão antigo passam ao padrão
       // novo (serifada e #D81B60). Versões muito antigas voltam aos padrões.
@@ -124,6 +124,11 @@ export const useSettings = create<SettingsState>()(
         prev.keySize = DEFAULTS.keySize;
         // O repertório mudou: os ids dos hinos abertos não existem mais.
         if (version < 7) prev.recent = [];
+        // Pergunta reiniciada para todos: aparece de novo na próxima vez.
+        if (version < 10) {
+          prev.perguntaVista = false;
+          prev.respostaPendente = false;
+        }
         if (version < 5) {
           if (prev.fontChoice === 'verdana') prev.fontChoice = 'serif';
           if (prev.colors.accent === '#FF5A1F') prev.colors = { ...prev.colors, accent: DEFAULT_COLORS.accent };
