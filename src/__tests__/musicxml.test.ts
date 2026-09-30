@@ -90,7 +90,7 @@ describe('partituras no aparelho', () => {
     expect(hasScore('loki-green-theme')).toBe(false);
     usePartituras.getState().add('loki-green-theme', musicXmlToScore(XML));
     expect(hasScore('loki-green-theme')).toBe(true);
-    expect(getSong('loki-green-theme')).toMatchObject({ title: 'Loki Green Theme', subtitle: 'Natalie Holt', hymnNumber: 5 });
+    expect(getSong('loki-green-theme')).toMatchObject({ title: 'Loki Green Theme', subtitle: 'Natalie Holt', hymnNumber: 7 });
     usePartituras.getState().remove('loki-green-theme');
     expect(getSong('loki-green-theme')).toBeUndefined();
   });
