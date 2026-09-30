@@ -53,11 +53,12 @@ export function Pergunta({ onYes, onDone }: { onYes: () => void; onDone: () => v
               <Text style={[t.bold, styles.wink, { color: p.text }]} accessibilityLabel="Piscadinha">
                 ;)
               </Text>
+              <Text style={[t.bold, styles.question, { color: p.text }]}>Então vamos continuar.</Text>
               <Pressable
                 onPress={onDone}
                 accessibilityRole="button"
                 style={({ pressed }) => [styles.button, { backgroundColor: p.primary }, pressed && { opacity: 0.8 }]}>
-                <Text style={[t.bold, styles.buttonText, { color: p.primaryText }]}>Continuar ♥</Text>
+                <Text style={[t.bold, styles.buttonText, { color: p.primaryText }]}>Continuar</Text>
               </Pressable>
             </Animated.View>
           ) : (

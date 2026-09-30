@@ -13,7 +13,6 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { synth } from '@/audio/synth';
-import { IphoneNotice } from '@/components/IphoneNotice';
 import { Onboarding } from '@/features/onboarding/Onboarding';
 import { sincronizarResposta } from '@/features/surpresa/resposta';
 import { useSettings } from '@/store/settings';
@@ -82,7 +81,6 @@ export default function RootLayout() {
             <Stack.Screen name="tocar/[songId]" options={{ gestureEnabled: false }} />
           </Stack>
           {hydrated && !onboarded && pathname === '/musicas' ? <Onboarding /> : null}
-          <IphoneNotice />
         </ThemeProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
