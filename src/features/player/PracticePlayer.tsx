@@ -79,8 +79,8 @@ const COMPUTER_KEYS: Record<string, { midi: number; row: 'upper' | 'lower' }> = 
 };
 const UNIT_NAME: Record<string, string> = { q: 'semínimas', e: 'colcheias', 'q.': 'semínimas pontuadas', h: 'mínimas' };
 
-/** Na 10ª tecla que ela tocar, aparece a pergunta. */
-const PERGUNTA_TECLA = 10;
+/** Na 5ª tecla que ela tocar, aparece a pergunta. */
+const PERGUNTA_TECLA = 5;
 
 /**
  * Tela de tocar um hino. Enquanto toca: só a música e o teclado. Ao pausar,
@@ -158,6 +158,14 @@ export function PracticePlayer({ song, onExit }: PracticePlayerProps) {
     startAfterSwitch.current = false;
     start();
   }, [p.session, start]);
+  // Terminou de ouvir a música inteira: passa sozinho para o Tocar, já valendo.
+  const status = p.status;
+  useEffect(() => {
+    if (!listen || status !== 'finished') return;
+    startAfterSwitch.current = true;
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reage ao fim da música (evento do motor)
+    setListen(false);
+  }, [listen, status]);
 
   // ------------------------------------------------------------- a pergunta
   // Quando ela está tocando (no Tocar) e aperta a 10ª tecla, a música para e
