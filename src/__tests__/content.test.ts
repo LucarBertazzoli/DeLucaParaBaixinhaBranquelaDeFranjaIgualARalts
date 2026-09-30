@@ -9,10 +9,10 @@ import { hasScore } from '@/content/songs';
 describe('repertório', () => {
   it('tem as 13 músicas em 6 grupos, com ids únicos', () => {
     expect(REPERTORIO.map((g) => [g.label, g.songs.length])).toEqual([
+      ['One Direction', 2],
       ['Jogos Vorazes', 4],
       ['Loki', 1],
       ['Pedidos avulsos', 2],
-      ['One Direction', 2],
       ['Nirvana', 2],
       ['Linkin Park', 2],
     ]);

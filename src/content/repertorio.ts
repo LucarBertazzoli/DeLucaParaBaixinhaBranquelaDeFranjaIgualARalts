@@ -21,6 +21,14 @@ export interface RepertoireGroup {
 
 export const REPERTORIO: RepertoireGroup[] = [
   {
+    id: 'one-direction',
+    label: 'One Direction',
+    songs: [
+      { id: 'story-of-my-life', title: 'Story of My Life', destaque: true },
+      { id: 'night-changes', title: 'Night Changes' },
+    ],
+  },
+  {
     id: 'jogos-vorazes',
     label: 'Jogos Vorazes',
     songs: [
@@ -41,14 +49,6 @@ export const REPERTORIO: RepertoireGroup[] = [
     songs: [
       { id: 'heartbeat', title: 'Heartbeat', artist: 'Childish Gambino' },
       { id: 'feel-so-close', title: 'Feel So Close', artist: 'Calvin Harris' },
-    ],
-  },
-  {
-    id: 'one-direction',
-    label: 'One Direction',
-    songs: [
-      { id: 'story-of-my-life', title: 'Story of My Life', destaque: true },
-      { id: 'night-changes', title: 'Night Changes' },
     ],
   },
   {
